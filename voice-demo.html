@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartReceptionist Voice Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    button {
+      background-color: #22d6b7;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .log {
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h2>🎙️ SmartReceptionist Voice Prototype</h2>
+  <button id="speakBtn">Talk to SmartReceptionist</button>
+  <div class="log" id="log">Say something like “What time is check-in?”</div>
+
+  <script>
+    const speakBtn = document.getElementById("speakBtn");
+    const log = document.getElementById("log");
+    const synth = window.speechSynthesis;
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+
+    recognition.onresult = function(event) {
+      const text = event.results[0][0].transcript.toLowerCase();
+      log.innerHTML = "You said: " + text;
+
+      let reply = "I'm sorry, I didn’t get that.";
+      if (text.includes("check in")) reply = "Check-in starts at 2 PM.";
+      else if (text.includes("check out")) reply = "Check-out is at 12 noon.";
+      else if (text.includes("wifi")) reply = "Yes, we offer free Wi-Fi in all rooms and public areas.";
+      else if (text.includes("book")) reply = "Sure! Can I have your full name to start your booking?";
+
+      const utterance = new SpeechSynthesisUtterance(reply);
+      utterance.lang = "en-US";
+      synth.speak(utterance);
+      log.innerHTML += "<br>SmartReceptionist: " + reply;
+    };
+
+    speakBtn.onclick = () => {
+      recognition.start();
+      log.innerHTML = "Listening...";
+    };
+  </script>
+</body>
+</html>
